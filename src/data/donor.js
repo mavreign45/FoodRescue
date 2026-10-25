@@ -1,0 +1,198 @@
+import { daysAgo, daysFromNow, minutesAgo, pickupWindow } from "./helpers";
+
+const breadWindow = pickupWindow(45, 190);
+const cinnamonWindow = pickupWindow(30, 90);
+const ryeWindow = { start: daysFromNow(1, 9, 0), end: daysFromNow(1, 12, 0) };
+
+export const donorProfile = {
+  id: "dnr_101",
+  name: "Maple & Crumb Bakery",
+  contact_name: "Nadia Wells",
+  donor_type: "bakery",
+  neighborhood: "Riverside",
+  address: "14 Alder Lane, Riverside",
+  email: "nadia@mapleandcrumb.example",
+};
+
+/**
+ * Donor workspace sample data. Figures such as collected portions are
+ * prototype values and are labelled as sample data in the UI.
+ */
+export const donorListings = [
+  {
+    id: "lst_1001",
+    donor_id: "dnr_101",
+    donor_name: "Maple & Crumb Bakery",
+    donor_type: "bakery",
+    title: "Fresh sourdough & seeded loaves",
+    description:
+      "A morning-bake mix of sourdough, seeded rye and country loaves.",
+    category: "bakery",
+    dietary_tags: ["vegan", "vegetarian"],
+    allergens: ["gluten"],
+    portions: 14,
+    portions_reserved: 4,
+    prepared_at: minutesAgo(420),
+    pickup_window_start: breadWindow.start,
+    pickup_window_end: breadWindow.end,
+    pickup_address: "14 Alder Lane, Riverside",
+    pickup_instructions:
+      "Side door on Alder Lane. Ring once and ask for Nadia or the closing baker.",
+    distance_km: 1.2,
+    photo_url: "/images/hero-bread.jpg",
+    status: "available",
+    created_at: minutesAgo(80),
+    updated_at: minutesAgo(20),
+  },
+  {
+    id: "lst_2002",
+    donor_id: "dnr_101",
+    donor_name: "Maple & Crumb Bakery",
+    donor_type: "bakery",
+    title: "Country rye & baguettes",
+    description:
+      "Tomorrow's bake is already fully prepped. These loaves are from today's second batch.",
+    category: "bakery",
+    dietary_tags: ["vegan", "vegetarian"],
+    allergens: ["gluten"],
+    portions: 18,
+    portions_reserved: 0,
+    prepared_at: minutesAgo(300),
+    pickup_window_start: ryeWindow.start,
+    pickup_window_end: ryeWindow.end,
+    pickup_address: "14 Alder Lane, Riverside",
+    pickup_instructions:
+      "Collect from the front counter during opening hours. Baguettes are boxed and ready.",
+    distance_km: 1.2,
+    photo_url: "/images/hero-bread.jpg",
+    status: "available",
+    created_at: minutesAgo(50),
+    updated_at: minutesAgo(50),
+  },
+  {
+    id: "lst_2003",
+    donor_id: "dnr_101",
+    donor_name: "Maple & Crumb Bakery",
+    donor_type: "bakery",
+    title: "Cinnamon buns & focaccia",
+    description:
+      "A sweet-and-savoury tray bake bundle reserved for Harbor Kitchen's evening service.",
+    category: "bakery",
+    dietary_tags: ["vegetarian"],
+    allergens: ["gluten", "milk", "eggs"],
+    portions: 20,
+    portions_reserved: 20,
+    prepared_at: minutesAgo(200),
+    pickup_window_start: cinnamonWindow.start,
+    pickup_window_end: cinnamonWindow.end,
+    pickup_address: "14 Alder Lane, Riverside",
+    pickup_instructions:
+      "Order is packed under the name Harbor Kitchen. Collect from the side door.",
+    distance_km: 1.2,
+    photo_url: "/images/pastries.jpg",
+    status: "reserved",
+    created_at: minutesAgo(240),
+    updated_at: minutesAgo(120),
+  },
+  {
+    id: "lst_2004",
+    donor_id: "dnr_101",
+    donor_name: "Maple & Crumb Bakery",
+    donor_type: "bakery",
+    title: "Seeded bagels & rolls",
+    description: "An end-of-day batch collected by the community fridge team.",
+    category: "bakery",
+    dietary_tags: ["vegetarian"],
+    allergens: ["gluten", "sesame"],
+    portions: 12,
+    portions_reserved: 12,
+    prepared_at: daysAgo(1, 6, 30),
+    pickup_window_start: daysAgo(1, 16, 0),
+    pickup_window_end: daysAgo(1, 18, 0),
+    pickup_address: "14 Alder Lane, Riverside",
+    pickup_instructions: "Collected by St. Brigid's Community Fridge.",
+    distance_km: 1.2,
+    photo_url: "/images/hero-bread.jpg",
+    status: "collected",
+    collected_at: daysAgo(1, 17, 10),
+    created_at: daysAgo(2, 9, 0),
+    updated_at: daysAgo(1, 17, 10),
+  },
+  {
+    id: "lst_2005",
+    donor_id: "dnr_101",
+    donor_name: "Maple & Crumb Bakery",
+    donor_type: "bakery",
+    title: "Weekend focaccia squares",
+    description:
+      "This listing passed its collection window before an organization could collect.",
+    category: "bakery",
+    dietary_tags: ["vegetarian"],
+    allergens: ["gluten", "milk"],
+    portions: 9,
+    portions_reserved: 0,
+    prepared_at: daysAgo(2, 8, 30),
+    pickup_window_start: daysAgo(2, 14, 0),
+    pickup_window_end: daysAgo(2, 17, 0),
+    pickup_address: "14 Alder Lane, Riverside",
+    pickup_instructions: "Side door collection.",
+    distance_km: 1.2,
+    photo_url: "/images/pastries.jpg",
+    status: "expired",
+    created_at: daysAgo(3, 10, 0),
+    updated_at: daysAgo(2, 17, 0),
+  },
+];
+
+export const donorRequests = [
+  {
+    id: "req_4101",
+    listing_id: "lst_1001",
+    listing_title: "Fresh sourdough & seeded loaves",
+    organization_id: "org_501",
+    organization_name: "Harbor Kitchen",
+    contact_name: "Maya Chen",
+    portions_requested: 6,
+    status: "pending",
+    requested_at: minutesAgo(18),
+    pickup_window_start: breadWindow.start,
+    pickup_window_end: breadWindow.end,
+    message:
+      "We're serving dinner at six and can collect by 5:15. Would a hand cart fit through the side door?",
+  },
+  {
+    id: "req_4102",
+    listing_id: "lst_2002",
+    listing_title: "Country rye & baguettes",
+    organization_id: "org_502",
+    organization_name: "Northside Youth Club",
+    contact_name: "Ellis Ford",
+    portions_requested: 8,
+    status: "pending",
+    requested_at: minutesAgo(42),
+    pickup_window_start: ryeWindow.start,
+    pickup_window_end: ryeWindow.end,
+    message:
+      "We can collect tomorrow morning in the club minibus. The young people run a toast-and-toppings breakfast.",
+  },
+  {
+    id: "req_4103",
+    listing_id: "lst_2003",
+    listing_title: "Cinnamon buns & focaccia",
+    organization_id: "org_501",
+    organization_name: "Harbor Kitchen",
+    contact_name: "Maya Chen",
+    portions_requested: 20,
+    status: "approved",
+    requested_at: minutesAgo(190),
+    pickup_window_start: cinnamonWindow.start,
+    pickup_window_end: cinnamonWindow.end,
+    message: "Our van can be there at 3. We'll bring two insulated trays.",
+    decided_at: minutesAgo(120),
+  },
+];
+
+export const donorSummary = {
+  collected_portions_this_month: 148,
+  period_label: "This month",
+};

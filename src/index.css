@@ -1,0 +1,215 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/fraunces/wght-italic.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, Cambria, "Times New Roman", serif;
+
+  --color-cream-50: #fcfaf4;
+  --color-cream-100: #f7f1e6;
+  --color-cream-200: #efe5d4;
+  --color-cream-300: #e3d4bb;
+  --color-cream-400: #cdb794;
+
+  --color-forest-50: #f2f7f2;
+  --color-forest-100: #e1ede3;
+  --color-forest-200: #c4dbc9;
+  --color-forest-300: #9cc0a6;
+  --color-forest-400: #6f9f7d;
+  --color-forest-500: #4b805c;
+  --color-forest-600: #396848;
+  --color-forest-700: #2e533a;
+  --color-forest-800: #264230;
+  --color-forest-900: #1b3325;
+  --color-forest-950: #0e1f16;
+
+  --color-coral-50: #fdf4f0;
+  --color-coral-100: #fbe4db;
+  --color-coral-200: #f7c9b8;
+  --color-coral-300: #f0a48a;
+  --color-coral-400: #e87b5a;
+  --color-coral-500: #de5a38;
+  --color-coral-600: #c74627;
+  --color-coral-700: #a53720;
+
+  --color-gold-100: #fbf0d4;
+  --color-gold-300: #f3d68a;
+  --color-gold-500: #e8b54b;
+  --color-gold-600: #d19a2c;
+
+  --color-ink: #18241d;
+  --color-ink-soft: #526157;
+
+  --shadow-card: 0 1px 2px rgba(24, 36, 29, 0.04), 0 14px 34px -18px rgba(24, 36, 29, 0.22);
+  --shadow-lift: 0 2px 4px rgba(24, 36, 29, 0.04), 0 26px 55px -24px rgba(24, 36, 29, 0.3);
+  --shadow-float: 0 18px 40px -16px rgba(14, 31, 22, 0.34);
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.75rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream-50);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    font-weight: 480;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-coral-200);
+    color: var(--color-forest-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest-600);
+    outline-offset: 3px;
+  }
+
+  [id] {
+    scroll-margin-top: 88px;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"] {
+    color-scheme: light;
+  }
+}
+
+@layer utilities {
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 12px rgba(14, 31, 22, 0.25);
+  }
+
+  .animate-rise {
+    animation: rise-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade {
+    animation: fade-in 0.5s ease-out both;
+  }
+
+  .animate-toast {
+    animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
