@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
   BadgeCheck,
   Check,
-  CheckCircle2,
-  History,
+  History as HistoryIcon,
   Inbox,
   MapPin,
   Sparkles,
@@ -18,7 +18,6 @@ import {
 } from "@/services/reservationsService";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import {
-  formatDate,
   formatDay,
   formatNumber,
   formatPickupWindow,
@@ -33,6 +32,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge, SampleBadge, StatusBadge } from "@/components/ui/Badge";
 import { MatchScore } from "@/components/ui/MatchScore";
 import { DeadlineChip } from "@/components/ui/DeadlineChip";
+import { CollectionsTable } from "@/components/dashboard/CollectionsTable";
 import { Avatar } from "@/components/ui/Avatar";
 import { DashboardSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/States";
@@ -162,25 +162,30 @@ function OrganizationRequestCard({ request, busy, onCancel }) {
               {formatTime(request.pickup_window_start)} –{" "}
               {formatTime(request.pickup_window_end)}
             </span>
-            {canCancel ? (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={() => onCancel(request)}
-                className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-ink-soft transition hover:bg-coral-50 hover:text-coral-700 disabled:opacity-50"
+            <div className="flex items-center gap-1">
+              <Link
+                to={`/tracking/${request.id}`}
+                className="inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-[10px] font-medium text-forest-700 transition hover:bg-forest-50"
               >
-                {busy ? (
-                  <span className="size-2.5 animate-spin rounded-full border border-ink-soft/30 border-t-ink-soft" />
-                ) : (
-                  <X aria-hidden="true" size={10} />
-                )}
-                Cancel request
-              </button>
-            ) : (
-              <span className="text-[10px] font-medium text-ink-soft/60">
-                No action needed
-              </span>
-            )}
+                View
+                <ArrowUpRight aria-hidden="true" size={10} />
+              </Link>
+              {canCancel ? (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onCancel(request)}
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-medium text-ink-soft transition hover:bg-coral-50 hover:text-coral-700 disabled:opacity-50"
+                >
+                  {busy ? (
+                    <span className="size-2.5 animate-spin rounded-full border border-ink-soft/30 border-t-ink-soft" />
+                  ) : (
+                    <X aria-hidden="true" size={10} />
+                  )}
+                  Cancel
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -189,14 +194,6 @@ function OrganizationRequestCard({ request, busy, onCancel }) {
 }
 
 function CollectionHistory({ collections }) {
-  const totals = collections.reduce(
-    (accumulator, item) => ({
-      portions: accumulator.portions + item.portions,
-      kg: accumulator.kg + item.estimated_waste_diverted_kg,
-    }),
-    { portions: 0, kg: 0 },
-  );
-
   return (
     <section
       aria-labelledby="collection-history-heading"
@@ -217,114 +214,15 @@ function CollectionHistory({ collections }) {
             Completed handovers from the past few weeks.
           </p>
         </div>
-        <Badge tone="forest" icon={CheckCircle2}>
+        <Badge tone="forest" icon={BadgeCheck}>
           {collections.length} collected
         </Badge>
       </div>
 
-      {collections.length === 0 ? (
-        <EmptyState
-          icon={History}
-          title="No collections yet"
-          description="Completed pickups will be recorded here."
-          className="border-0"
-        />
-      ) : (
-        <>
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[560px] text-left">
-              <thead>
-                <tr className="border-b border-forest-900/8 bg-cream-50/60 text-[9.5px] font-semibold uppercase tracking-[0.13em] text-ink-soft/70">
-                  <th scope="col" className="px-4 py-2.5 font-semibold">
-                    Collected
-                  </th>
-                  <th scope="col" className="px-4 py-2.5 font-semibold">
-                    Food &amp; donor
-                  </th>
-                  <th scope="col" className="px-4 py-2.5 text-right font-semibold">
-                    Portions
-                  </th>
-                  <th scope="col" className="px-4 py-2.5 text-right font-semibold">
-                    Est. diverted
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-forest-900/6">
-                {collections.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="transition-colors hover:bg-cream-50/60"
-                  >
-                    <td className="whitespace-nowrap px-4 py-3">
-                      <p className="flex items-center gap-1.5 text-[11.5px] font-medium text-forest-900">
-                        <Check
-                          aria-hidden="true"
-                          size={11}
-                          className="text-forest-500"
-                        />
-                        {formatDay(item.collected_at)}
-                      </p>
-                      <p className="mt-0.5 pl-[17px] text-[10px] text-ink-soft/60">
-                        {formatTime(item.collected_at)}
-                      </p>
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="text-[11.5px] font-medium text-forest-950">
-                        {item.listing_title}
-                      </p>
-                      <p className="mt-0.5 text-[10px] text-ink-soft">
-                        {item.donor_name}
-                      </p>
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right text-[11.5px] font-semibold text-forest-900">
-                      {formatNumber(item.portions)}
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-right">
-                      <span className="inline-flex items-center rounded-full bg-forest-50 px-2 py-1 text-[10px] font-medium text-forest-700">
-                        {item.estimated_waste_diverted_kg.toFixed(1)} kg
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="divide-y divide-forest-900/6 md:hidden">
-            {collections.map((item) => (
-              <div key={item.id} className="flex items-start justify-between gap-3 p-4">
-                <div className="min-w-0">
-                  <p className="text-[12px] font-semibold text-forest-950">
-                    {item.listing_title}
-                  </p>
-                  <p className="mt-0.5 text-[10.5px] text-ink-soft">
-                    {item.donor_name} · {formatDate(item.collected_at)}
-                  </p>
-                  <p className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-forest-600">
-                    <Check aria-hidden="true" size={10} />
-                    {portionLabel(item.portions)} collected
-                  </p>
-                </div>
-                <span className="shrink-0 rounded-full bg-forest-50 px-2 py-1 text-[10px] font-medium text-forest-700">
-                  {item.estimated_waste_diverted_kg.toFixed(1)} kg
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-forest-900/8 bg-cream-50/60 px-4 py-3">
-            <p className="text-[10.5px] text-ink-soft">
-              Estimated waste diverted is a backend calculation. Values are
-              illustrative.
-            </p>
-            <div className="flex items-center gap-3 text-[10.5px] font-medium text-forest-800">
-              <span>{formatNumber(totals.portions)} portions</span>
-              <span aria-hidden="true" className="size-1 rounded-full bg-forest-300" />
-              <span>{totals.kg.toFixed(1)} kg est.</span>
-            </div>
-          </div>
-        </>
-      )}
+      <CollectionsTable
+        collections={collections}
+        note="Estimated waste diverted is a backend calculation. Values are illustrative."
+      />
     </section>
   );
 }
@@ -361,14 +259,15 @@ export function OrganizationDashboardPage() {
     (request) => request.status === "pending",
   );
   const requestedListingIds = useMemo(
-    () =>
-      new Set(
-        requests
-          .filter((request) =>
-            ACTIVE_REQUEST_STATUSES.includes(request.status),
-          )
-          .map((request) => request.listing_id),
-      ),
+    () => {
+      const set = new Set();
+      for (const request of requests) {
+        if (ACTIVE_REQUEST_STATUSES.includes(request.status)) {
+          set.add(request.listing_id);
+        }
+      }
+      return set;
+    },
     [requests],
   );
   const portionsCollected = collections.reduce(
@@ -473,11 +372,7 @@ export function OrganizationDashboardPage() {
   }
 
   if (isLoading || !workspace || !profile) {
-    return (
-      <Container className="py-10">
-        <DashboardSkeleton />
-      </Container>
-    );
+    return <Container className="py-10"><DashboardSkeleton /></Container>;
   }
 
   return (
@@ -526,7 +421,7 @@ export function OrganizationDashboardPage() {
             } approved`}
           />
           <StatCard
-            icon={History}
+            icon={HistoryIcon}
             label="Collections logged"
             value={formatNumber(collections.length)}
             detail="In the recent sample log"
@@ -629,8 +524,7 @@ export function OrganizationDashboardPage() {
             </div>
 
             <p className="mt-3 text-center text-[10px] leading-relaxed text-ink-soft/65">
-              Pickup verification and full tracking arrive with the reservation
-              flow.
+              Open a request to see its status timeline and pickup details.
             </p>
           </section>
 

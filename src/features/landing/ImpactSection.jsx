@@ -1,4 +1,5 @@
-import { FlaskConical } from "lucide-react";
+import { ArrowUpRight, FlaskConical } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { SampleBadge } from "@/components/ui/Badge";
 import {
@@ -50,6 +51,15 @@ export function ImpactSection() {
               below illustrate the prototype&rsquo;s future impact dashboard —
               they are not real FoodRescue results.
             </p>
+            <Button
+              to="/impact"
+              variant="cream"
+              size="sm"
+              trailingIcon={ArrowUpRight}
+              className="mt-5"
+            >
+              See the impact dashboard
+            </Button>
           </div>
         </div>
 

@@ -7,7 +7,7 @@ import { SampleBadge } from "@/components/ui/Badge";
 const EXPLORE_LINKS = [
   { label: "Discover food", to: "/discover" },
   { label: "How it works", to: "/#how-it-works" },
-  { label: "Our approach", to: "/#impact" },
+  { label: "Impact dashboard", to: "/impact" },
 ];
 
 const WORKSPACE_LINKS = [

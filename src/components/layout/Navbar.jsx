@@ -9,6 +9,7 @@ import { Container } from "./Container";
 const NAV_LINKS = [
   { label: "Discover food", to: "/discover", end: false },
   { label: "How it works", to: "/#how-it-works", end: true },
+  { label: "Impact", to: "/impact", end: true },
   { label: "For donors", to: "/donor", end: true },
   { label: "For organizations", to: "/organization", end: true },
 ];

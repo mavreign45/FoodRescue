@@ -61,7 +61,16 @@ FastAPI/PostgreSQL backend convention.
 | `message` | string | Optional note from the requesting organization |
 | `decided_at` | timestamp? | When the donor approved or declined |
 | `collected_at` | timestamp? | When the pickup was verified |
-| `verification_code` | string? | Future pickup verification placeholder |
+| `verification_code` | string? | Sample pickup verification code (`FR-xxxx`) |
+| `timeline` | event[] | Ordered status events for the tracking page |
+
+### Reservation timeline event
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `code` | string | `requested`, `approved`, `declined`, `cancelled`, `pickup`, `collected` |
+| `label` | string | Human-readable label |
+| `at` | timestamp | When the event happened |
 
 ### Reservation status values
 
@@ -111,6 +120,35 @@ output; sample values in this prototype are labelled as such.
 | `status` | string | `collected` |
 | `estimated_waste_diverted_kg` | number | A backend estimate; never calculated client-side |
 
+## Impact summary (prototype shape)
+
+`GET /impact/summary` is expected to return:
+
+```json
+{
+  "summary": {
+    "completed_collections": 128,
+    "portions_redistributed": 1864,
+    "estimated_waste_diverted_kg": 824,
+    "partner_organizations": 36,
+    "active_donors": 22,
+    "period_label": "Last 30 days"
+  },
+  "weekly_series": [
+    { "label": "Wk 1", "portions": 402, "collections": 27 }
+  ],
+  "category_breakdown": [
+    { "category": "bakery", "portions": 512, "collections": 41, "kg": 210 }
+  ],
+  "recent_collections": ["...": "CollectionRecord"],
+  "top_donors": [{ "name": "...", "portions": 386, "collections": 34 }]
+}
+```
+
+`estimated_waste_diverted_kg` is always a backend estimate — the frontend
+never converts portions into weight. Prototype values are labelled as sample
+data in the UI.
+
 ## Endpoint assumptions (to confirm with the backend)
 
 These are placeholders for the integration phase, not final API documentation.
@@ -123,6 +161,7 @@ These are placeholders for the integration phase, not final API documentation.
 | `GET` | `/donors/me/workspace` | Donor dashboard data |
 | `GET` | `/organizations/me/workspace` | Organization dashboard data |
 | `POST` | `/reservations` | Request a listing |
+| `GET` | `/reservations/{id}` | Reservation tracking details |
 | `PATCH` | `/reservations/{id}` | Approve, decline or cancel a request |
 | `GET` | `/impact/summary` | Impact dashboard totals |
 

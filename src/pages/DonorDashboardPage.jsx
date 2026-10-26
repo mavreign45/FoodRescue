@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
   Check,
@@ -177,10 +178,17 @@ function RequestCard({ request, onRespond, busy }) {
                   Approve
                 </button>
               </div>
+            ) : request.status === "approved" ? (
+              <Link
+                to={`/tracking/${request.id}`}
+                className="ml-auto inline-flex items-center gap-1 rounded-full bg-forest-50 px-2.5 py-1.5 text-[9.5px] font-medium text-forest-700 transition hover:bg-forest-100"
+              >
+                Track pickup
+                <ArrowUpRight aria-hidden="true" size={10} />
+              </Link>
             ) : (
-              <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-forest-50 px-2 py-1 text-[9.5px] font-medium text-forest-700">
-                <Check aria-hidden="true" size={10} />
-                {request.status === "approved" ? "Ready for collection" : "Resolved"}
+              <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-cream-100 px-2 py-1 text-[9.5px] font-medium text-ink-soft">
+                Resolved
               </span>
             )}
           </div>

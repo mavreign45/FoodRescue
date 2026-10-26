@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
-  Check,
   Clock3,
   Heart,
   MapPin,
@@ -23,7 +23,7 @@ import { CategoryIcon } from "./CategoryIcon";
 export function FoodCard({
   listing,
   onReserve,
-  isReserved = false,
+  busy = false,
   onToggleSave,
   isSaved = false,
 }) {
@@ -31,30 +31,38 @@ export function FoodCard({
   const allergens = listing.allergens ?? [];
   const visibleTags = dietaryTags.slice(0, 3);
   const extraTagCount = dietaryTags.length - visibleTags.length;
+  const detailsPath = `/food/${listing.id}`;
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-forest-900/10 bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift">
-      <div className="relative aspect-[4/3] overflow-hidden bg-cream-100">
+      <Link
+        to={detailsPath}
+        aria-label={`View details for ${listing.title}`}
+        className="relative block aspect-[4/3] overflow-hidden bg-cream-100"
+      >
         <img
           src={listing.photo_url}
           alt={`${listing.title} from ${listing.donor_name}`}
           loading="lazy"
           className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
         />
-        <div
+        <span
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-t from-forest-950/60 via-forest-950/0 to-forest-950/5"
         />
 
-        <div className="absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
-          <Badge tone="white" icon={undefined} className="backdrop-blur-md">
+        <span className="absolute left-3 right-3 top-3 flex items-start justify-between gap-2">
+          <Badge tone="white" className="backdrop-blur-md">
             <CategoryIcon category={listing.category} size={12} />
             {CATEGORY_LABELS[listing.category] ?? listing.category}
           </Badge>
           {onToggleSave ? (
             <button
               type="button"
-              onClick={() => onToggleSave(listing.id)}
+              onClick={(event) => {
+                event.preventDefault();
+                onToggleSave(listing.id);
+              }}
               aria-label={
                 isSaved
                   ? `Remove ${listing.title} from saved listings`
@@ -75,16 +83,16 @@ export function FoodCard({
               />
             </button>
           ) : null}
-        </div>
+        </span>
 
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
+        <span className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
           <span className="inline-flex items-center gap-1 rounded-full bg-forest-950/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
             <MapPin aria-hidden="true" size={11} />
             {listing.distance_km} km
           </span>
           <DeadlineChip deadline={listing.pickup_window_end} />
-        </div>
-      </div>
+        </span>
+      </Link>
 
       <div className="flex flex-1 flex-col p-5">
         <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-forest-600">
@@ -95,8 +103,13 @@ export function FoodCard({
           </span>
         </p>
 
-        <h3 className="mt-2 line-clamp-2 text-[21px] leading-[1.18] text-forest-950">
-          {listing.title}
+        <h3 className="mt-2 line-clamp-2 text-[21px] leading-[1.18]">
+          <Link
+            to={detailsPath}
+            className="text-forest-950 decoration-coral-300 decoration-2 underline-offset-4 transition hover:text-forest-800 hover:underline"
+          >
+            {listing.title}
+          </Link>
         </h3>
 
         <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-ink-soft">
@@ -145,25 +158,19 @@ export function FoodCard({
             <button
               type="button"
               onClick={() => onReserve?.(listing)}
-              disabled={isReserved}
+              disabled={busy}
+              aria-busy={busy || undefined}
               className={cn(
-                "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-[12.5px] font-medium transition",
-                isReserved
-                  ? "bg-forest-100 text-forest-700"
-                  : "bg-forest-900 text-cream-50 hover:bg-forest-800",
+                "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-[12.5px] font-medium transition disabled:opacity-60",
+                "bg-forest-900 text-cream-50 hover:bg-forest-800",
               )}
             >
-              {isReserved ? (
-                <>
-                  <Check aria-hidden="true" size={13} />
-                  Request sent
-                </>
+              {busy ? (
+                <span className="size-3 animate-spin rounded-full border-[1.5px] border-cream-50/30 border-t-cream-50" />
               ) : (
-                <>
-                  Reserve
-                  <ArrowUpRight aria-hidden="true" size={13} />
-                </>
+                <ArrowUpRight aria-hidden="true" size={13} />
               )}
+              {busy ? "Requesting…" : "Reserve"}
             </button>
           </div>
         </div>

@@ -6,6 +6,7 @@ import {
   organizationRecommendations,
   organizationRequests,
 } from "@/data/organization";
+import { cloneValue } from "@/utils/clone";
 
 const NETWORK_DELAY = 480;
 
@@ -29,25 +30,19 @@ export function wait(ms = NETWORK_DELAY, signal) {
   });
 }
 
-function clone(value) {
-  return typeof structuredClone === "function"
-    ? structuredClone(value)
-    : JSON.parse(JSON.stringify(value));
-}
-
 export const sampleApi = {
   async getListings({ signal } = {}) {
     await wait(NETWORK_DELAY, signal);
-    return { items: clone(sampleListings), source: "sample" };
+    return { items: cloneValue(sampleListings), source: "sample" };
   },
 
   async getDonorWorkspace({ signal } = {}) {
     await wait(NETWORK_DELAY, signal);
     return {
-      profile: clone(donorProfile),
-      listings: clone(donorListings),
-      requests: clone(donorRequests),
-      summary: clone(donorSummary),
+      profile: cloneValue(donorProfile),
+      listings: cloneValue(donorListings),
+      requests: cloneValue(donorRequests),
+      summary: cloneValue(donorSummary),
       source: "sample",
     };
   },
@@ -55,10 +50,10 @@ export const sampleApi = {
   async getOrganizationWorkspace({ signal } = {}) {
     await wait(NETWORK_DELAY, signal);
     return {
-      profile: clone(organizationProfile),
-      recommendations: clone(organizationRecommendations),
-      requests: clone(organizationRequests),
-      collection_history: clone(collectionHistory),
+      profile: cloneValue(organizationProfile),
+      recommendations: cloneValue(organizationRecommendations),
+      requests: cloneValue(organizationRequests),
+      collection_history: cloneValue(collectionHistory),
       source: "sample",
     };
   },
@@ -68,7 +63,7 @@ export const sampleApi = {
     const timestamp = new Date().toISOString();
 
     return {
-      ...clone(payload),
+      ...cloneValue(payload),
       id: `lst_sample_${Date.now()}`,
       donor_id: donorProfile.id,
       donor_name: donorProfile.name,
@@ -77,32 +72,6 @@ export const sampleApi = {
       status: "available",
       created_at: timestamp,
       updated_at: timestamp,
-      source: "sample",
-    };
-  },
-
-  async createReservation(payload, { signal } = {}) {
-    await wait(650, signal);
-    const timestamp = new Date().toISOString();
-
-    return {
-      ...clone(payload),
-      id: `req_sample_${Date.now()}`,
-      organization_id: organizationProfile.id,
-      organization_name: organizationProfile.name,
-      contact_name: organizationProfile.contact_name,
-      status: "pending",
-      requested_at: timestamp,
-      source: "sample",
-    };
-  },
-
-  async updateRequestStatus(requestId, status, { signal } = {}) {
-    await wait(500, signal);
-    return {
-      id: requestId,
-      status,
-      decided_at: new Date().toISOString(),
       source: "sample",
     };
   },

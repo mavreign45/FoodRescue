@@ -1,5 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ChevronRight,
   LayoutGrid,
@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { getListings } from "@/services/listingsService";
+import { createReservation } from "@/services/reservationsService";
 import { useAsyncData } from "@/hooks/useAsyncData";
 import {
   CATEGORY_LABELS,
@@ -64,8 +65,9 @@ export function DiscoverPage() {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const [filters, setFilters] = useState(INITIAL_FILTERS);
-  const [reserved, setReserved] = useState(() => new Set());
+  const [reservingId, setReservingId] = useState(null);
   const searchRef = useRef(null);
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const listings = data?.items ?? [];
@@ -143,13 +145,39 @@ export function DiscoverPage() {
     setQuery("");
   };
 
-  const handleReserve = (listing) => {
-    setReserved((current) => new Set(current).add(listing.id));
-    toast({
-      title: "Sample request saved",
-      description: `${listing.title} is marked on this screen only. No request was sent to a real donor.`,
-      tone: "info",
-    });
+  const handleReserve = async (listing) => {
+    setReservingId(listing.id);
+
+    try {
+      const request = await createReservation({
+        listing_id: listing.id,
+        listing_title: listing.title,
+        listing_photo_url: listing.photo_url,
+        listing_category: listing.category,
+        donor_id: listing.donor_id,
+        donor_name: listing.donor_name,
+        portions_requested: Math.max(
+          1,
+          listing.portions - (listing.portions_reserved ?? 0),
+        ),
+        pickup_window_start: listing.pickup_window_start,
+        pickup_window_end: listing.pickup_window_end,
+        pickup_address: listing.pickup_address,
+        pickup_instructions: listing.pickup_instructions,
+        distance_km: listing.distance_km,
+        message: "Requested from the food board.",
+      });
+      navigate(`/tracking/${request.id}`);
+    } catch (reserveError) {
+      toast({
+        title: "We couldn't send that request",
+        description:
+          reserveError.message || "Please try again in a moment.",
+        tone: "error",
+      });
+    } finally {
+      setReservingId(null);
+    }
   };
 
   const showLoading = isLoading || preview === "loading";
@@ -205,8 +233,8 @@ export function DiscoverPage() {
           <div className="mt-6">
             <InlineNotice tone="sample">
               This is a prototype food discovery feed. Listings, donors and
-              distances are sample content; reservation actions stay on this
-              screen.
+              distances are sample content; reservations made here are
+              simulated and never reach a real donor.
             </InlineNotice>
           </div>
         </Container>
@@ -417,7 +445,7 @@ export function DiscoverPage() {
                   key={listing.id}
                   listing={listing}
                   onReserve={handleReserve}
-                  isReserved={reserved.has(listing.id)}
+                  busy={reservingId === listing.id}
                 />
               ))}
             </div>

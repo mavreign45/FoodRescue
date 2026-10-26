@@ -12,8 +12,8 @@ PostgreSQL backend integration comes in a later phase.
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Landing, food discovery, donor dashboard, organization dashboard | ✅ Built |
-| 2 | Food details, reservation tracking, impact dashboard | ⏳ Next |
-| 3 | Authentication + organization verification screens | ⏳ |
+| 2 | Food details, reservation tracking, impact dashboard | ✅ Built |
+| 3 | Authentication + organization verification screens | ⏳ Next |
 | 4 | Listing API integration | ⏳ |
 
 ## Run it
@@ -27,6 +27,9 @@ Open http://localhost:5173.
 
 - `/` — landing page
 - `/discover` — food discovery
+- `/food/:listingId` — food details (photo, quantity, preparation time, allergens, pickup instructions, deadline)
+- `/tracking/:requestId` — reservation tracking (status timeline + pickup verification placeholder)
+- `/impact` — impact dashboard (completed collections, portions redistributed, estimated waste diverted)
 - `/donor` — donor workspace demo
 - `/organization` — organization workspace demo
 
